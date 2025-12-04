@@ -28,6 +28,9 @@ app.use(cors({   //allow access from my frontend
 //Routes
 app.use('/', User);
 app.use('/', Product);
+app.get('/', (req, res) =>{
+  res.send('Hello')
+})
 
 
 //connect to mongodb
