@@ -17,7 +17,7 @@ const DisplayProducts = async (req, res) => {
   try{
     const products = await ProductSchema.find();
      if(products.length === 0){
-     return res.json({ message: "No products available" });
+     return res.json([]);
     }
     res.status(200).json({ products });
   }catch(err){
