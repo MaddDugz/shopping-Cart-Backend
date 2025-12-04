@@ -92,7 +92,7 @@ const findProduct = async (req, res) => {
   }).lean();
 
     if(Product.length === 0){
-     return res.status(404).json({ message: "Product not found" });
+      return res.json([]);
     }
 
     res.status(200).json(Product);
