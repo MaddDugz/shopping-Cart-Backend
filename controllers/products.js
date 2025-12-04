@@ -1,15 +1,24 @@
 const ProductSchema = require("../module/productsModule.js");
 const multer = require('multer'); // for multipart/form-data (file upload)
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
+const cloudinary = require("cloudinary").v2;
 
-// multer config for file upload
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'uploads/')
-    },
-    filename: function (req, file, cb) {
-        cb(null, Date.now() + '-' + file.originalname )
-    }
-})
+//for storage on cloud
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.CLOUD_API_KEY,
+  api_secret: process.env.CLOUD_API_SECRET,
+});
+
+// config for file upload
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "my_uploads", // cloud folder name
+    allowed_formats: ["jpg", "png", "jpeg"],
+  },
+});
+
 const upload = multer({ storage });
 
 //Display all Products
