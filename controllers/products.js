@@ -1,10 +1,10 @@
 const ProductSchema = require("../module/productsModule.js");
 const multer = require('multer'); // for multipart/form-data (file upload)
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
-const cloudinary = require("cloudinary").v2;
+const Cloudinary = require("cloudinary").v2;
 
 //for storage on cloud
-cloudinary.config({
+Cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
   api_key: process.env.CLOUD_API_KEY,
   api_secret: process.env.CLOUD_API_SECRET,
@@ -12,14 +12,23 @@ cloudinary.config({
 
 // config for file upload
 const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
+  cloudinary: Cloudinary,
   params: {
     folder: "my_uploads", // cloud folder name
     allowed_formats: ["jpg", "png", "jpeg"],
   },
 });
 
+//handle deletion from cloudinary
+function handleDeletion(url){
+    const parts = url.split("/")
+    const filename = parts.pop()
+    const folder = parts.slice(7).join("/")
+    return folder + "/" + filename.split(".")[0]
+}
+
 const upload = multer({ storage });
+
 
 //Display all Products
 const DisplayProducts = async (req, res) => {
@@ -83,7 +92,14 @@ const UpdateProduct = async (req, res) => {
 //delte Product
 const deleteProduct = async (req, res) => {
   try{
-    const newProduct = await ProductSchema.findByIdAndDelete(req.params.id);
+    const Product = await ProductSchema.findById(req.params.id)
+    const ProductImage = await handleDeletion(id.imageUrl)
+
+      //delete image from cloudinary
+      const result = await Cloudinary.uploader.destroy(ProductImage);
+      console.log(result)
+
+    const newProduct = await ProductSchema.findByIdAndDelete(req.params.id); // delete rest from db
     res.status(200).send("Product Deleted");
   }catch(err){
     console.error("Error:" + err.message);
