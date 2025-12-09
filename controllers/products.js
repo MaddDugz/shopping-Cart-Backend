@@ -94,8 +94,8 @@ const deleteProduct = async (req, res) => {
   try{
     const id = req.params.id 
     const Product = await ProductSchema.findById(id)
-    console.log(id.imageUrl)
-    const ProductImage =  handleDeletion(id.imageUrl)
+    console.log(Product.imageUrl)
+    const ProductImage =  handleDeletion(Product.imageUrl)
 
       //delete image from cloudinary
       const result = await Cloudinary.uploader.destroy(ProductImage);
