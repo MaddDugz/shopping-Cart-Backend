@@ -92,14 +92,15 @@ const UpdateProduct = async (req, res) => {
 //delte Product
 const deleteProduct = async (req, res) => {
   try{
-    const Product = await ProductSchema.findById(req.params.id)
-    const ProductImage = await handleDeletion(id.imageUrl)
+    const id = req.params.id 
+    const Product = await ProductSchema.findById(id)
+    const ProductImage =  handleDeletion(id.imageUrl)
 
       //delete image from cloudinary
       const result = await Cloudinary.uploader.destroy(ProductImage);
       console.log(result)
 
-    const newProduct = await ProductSchema.findByIdAndDelete(req.params.id); // delete rest from db
+    const newProduct = await ProductSchema.findByIdAndDelete(id); // delete rest from db
     res.status(200).send("Product Deleted");
   }catch(err){
     console.error("Error:" + err.message);
